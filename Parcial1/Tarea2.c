@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Estructura de los nodos
 typedef struct nodo{
     int val;
     struct nodo *sig;
 }Nodo;
 
+// Estructura principal de la pila
 typedef struct pila{
     Nodo* tope;
     int sizePila;
 }Pila;
 
+// Funcion para ingresar valores en la pila
 void push(Pila* p, int val){
     Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
     nuevoNodo->val = val;
@@ -19,6 +22,7 @@ void push(Pila* p, int val){
     p->sizePila++;
 }
 
+// Funcion para eliminar valores en la pila
 int pop(Pila*p){
     Nodo* temp = (Nodo*)malloc(sizeof(Nodo));
     int val = p->tope->val;
@@ -29,6 +33,7 @@ int pop(Pila*p){
     return val;
 }
 
+// Funcion para conocer el tope de la pila
 int conocerTope(Pila *p){
     if(p->tope == NULL){
         printf("La pila esta vacia");
@@ -37,6 +42,7 @@ int conocerTope(Pila *p){
     return p->tope->val;
 }
 
+// Funcion para imprimir los valores dentro de la pila
 void imprimirPila(Pila*p){
     Nodo *temp = p->tope;
     while(temp != NULL){
@@ -45,6 +51,7 @@ void imprimirPila(Pila*p){
     }
 }
 
+// Funcion para conocer el tamaño de la pila
 int sizePila(Pila* p){
     if(p->tope == NULL){
         printf("La pila esta vacia");
@@ -53,11 +60,14 @@ int sizePila(Pila* p){
     return p->sizePila;
 }
 
+// Funcion principal
 int main(){
+    // Inicializar la pila
     Pila pila;
     pila.tope = NULL;
     pila.sizePila = 0;
 
+    // Ingresar valores dentro de la pila
     push(&pila,15);
     push(&pila,14);
     push(&pila,12);
@@ -69,10 +79,12 @@ int main(){
 
     printf("\nTamanio de la pila actual: %d",sizePila(&pila));
 
+    // Quitar el primer valor dentro de la pila
     printf("\nPila quitando el valor de tope (pop): \n");
     pop(&pila);
 
     imprimirPila(&pila);
 
+    // Conocer el tamaño de la pila actual
     printf("\nTamanio de la pila actual: %d",sizePila(&pila));
 }
