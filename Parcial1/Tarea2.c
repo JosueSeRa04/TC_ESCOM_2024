@@ -20,49 +20,52 @@ int pop(Pila*p);
 int conocerTope(Pila *p);
 void imprimirPila(Pila*p);
 int sizePila(Pila* p);
-
+void indicaciones();
 // Funcion principal
 int main(){
 
+    int op;
     // Inicializar la pila
     Pila pila;
     pila.tope = NULL;
     pila.sizePila = 0;
     Nodo n;
+
+    while(op != 5){
+        indicaciones();
+        fflush(stdin);
+        scanf("%d",&op);
+        switch (op)
+        {
+        case 1:
+            fflush(stdin);
+            printf("\nDame el valor: ");
+            scanf("%d",&n.val);
+            push(&pila,n);
+            break;
+        case 2:
+            printf("\nHaz eliminado el valor: %d",pop(&pila));
+            break;
+        case 3:
+            printf("Esta es la pila: \n");
+            imprimirPila(&pila);
+            break;
+        case 4:
+            if(isEmpty(&pila)){
+                printf("\nLa pila esta vacia");
+            }
+            else{
+                printf("\nLa pila no esta vacia");
+            }
+            break;
+        case 5:
+            printf("\nSaliste del programa");
+            break;
+        default:
+            break;
+        }
+    }
     
-    printf("Introduce un valor: ");
-    scanf("%d",&n.val);
-
-    push(&pila,n);
-
-    printf("Introduce un valor: ");
-    scanf("%d",&n.val);
-
-    push(&pila,n);
-
-    printf("Pila con valores (push): \n");
-    imprimirPila(&pila);
-
-    printf("\nConocer el valor de tope: %d",conocerTope(&pila));
-
-    printf("\nTamanio de la pila actual: %d",sizePila(&pila));
-
-    // Quitar el primer valor dentro de la pila
-    printf("\nPila quitando el valor de tope (pop): \n");
-    pop(&pila);
-
-    imprimirPila(&pila);
-
-    // Conocer el tamaño de la pila actual
-    printf("\nTamanio de la pila actual: %d",sizePila(&pila));
-
-    // Saber si la pila esta vacia
-    if(isEmpty(&pila)){
-        printf("\nLa pila esta vacia");
-    }
-    else{
-        printf("\nLa pila no esta vacia");
-    }
 }
 
 
@@ -140,4 +143,14 @@ void eliminarPila(Pila* p){
         free(temp);
         p->sizePila--;
     }
+}
+
+void indicaciones(){
+    printf("\nQue quieres hacer con la pila?\n");
+    printf("1.- Agregar un valor\n");
+    printf("2.- Eliminar un valor\n");
+    printf("3.- Imprimir la pila\n");
+    printf("4.- Verificar si la pila esta vacia\n");
+    printf("5.- Salir\n");
+    printf("Opcion seleccionada: ");
 }
