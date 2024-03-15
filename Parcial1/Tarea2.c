@@ -4,6 +4,7 @@
 // Estructura de los nodos
 typedef struct nodo{
     int val;
+    char *cadena;
     struct nodo *sig;
 }Nodo;
 
@@ -16,7 +17,7 @@ typedef struct pila{
 void eliminarPila(Pila* p);
 int isEmpty(Pila *p);
 void push(Pila* p, Nodo n);
-int pop(Pila*p);
+Nodo* pop(Pila*p);
 int conocerTope(Pila *p);
 void imprimirPila(Pila*p);
 int sizePila(Pila* p);
@@ -30,6 +31,7 @@ int main(){
     pila.tope = NULL;
     pila.sizePila = 0;
     Nodo n;
+    Nodo* node = (Nodo*)malloc(sizeof(Nodo)); // Ayuda de nodo
 
     while(op != 5){
         indicaciones();
@@ -41,10 +43,15 @@ int main(){
             fflush(stdin);
             printf("\nDame el valor: ");
             scanf("%d",&n.val);
+            printf("\nDame una cadena: ");
+            fflush(stdin);
+            n.cadena = (char*)malloc(100);
+            scanf("%s",n.cadena); 
             push(&pila,n);
             break;
         case 2:
-            printf("\nHaz eliminado el valor: %d",pop(&pila));
+            node = pop(&pila);
+            printf("\nHaz eliminado los valores: %d %s",node->val,node->cadena);
             break;
         case 3:
             printf("Esta es la pila: \n");
@@ -81,24 +88,29 @@ int isEmpty(Pila *p){
 void push(Pila* p, Nodo n){
     Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
     nuevoNodo->val = n.val;
+    nuevoNodo->cadena = n.cadena;
     nuevoNodo->sig = p->tope;
     p->tope = nuevoNodo;
     p->sizePila++;
 }
 
 // Funcion para eliminar valores en la pila
-int pop(Pila*p){
+Nodo* pop(Pila*p){
     Nodo* temp = (Nodo*)malloc(sizeof(Nodo));
+    Nodo* obtener = (Nodo*)malloc(sizeof(Nodo));
     if(p->tope == NULL){
         printf("La pila esta vacia");
-        return -1;
+        obtener->val = 0;
+        obtener->cadena = '\0';
+        return obtener;
     }
-    int val = p->tope->val;
+    obtener->val= p->tope->val;
+    obtener->cadena = p->tope->cadena;
     temp = p->tope;
     p->tope = p->tope->sig;
     free(temp);
     p->sizePila--;
-    return val;
+    return obtener;
 }
 
 // Funcion para conocer el tope de la pila
@@ -118,7 +130,9 @@ void imprimirPila(Pila*p){
     }
     else{
         while(temp != NULL){
-            printf("%d ",temp->val);
+            printf("------------------\n");
+            printf("%d %s \n",temp->val,temp->cadena);
+            printf("------------------\n");
             temp = temp->sig;
         }
     }
