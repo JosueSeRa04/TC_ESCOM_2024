@@ -15,7 +15,6 @@ typedef struct cola{
     int sizecola;
 }cola;
 
-void eliminarcola(cola* p);
 int isEmpty(cola *p);
 void push(cola* p, Nodo n);
 Nodo* pop(cola*p);
@@ -97,7 +96,7 @@ void push(cola* p, Nodo n){
         p->sizecola++;     
     }
     else{
-        nuevoNodo->sig = p->fin->sig;
+        nuevoNodo->sig = NULL;
         p->fin->sig = nuevoNodo;
         p->fin = nuevoNodo;
         p->sizecola++;    
@@ -158,16 +157,6 @@ int sizecola(cola* p){
     return p->sizecola;
 }
 
-
-void eliminarcola(cola* p){
-    Nodo* temp;
-    while(p->tope != NULL){
-        temp = p->tope;
-        p->tope = p->tope->sig;
-        free(temp);
-        p->sizecola--;
-    }
-}
 
 void indicaciones(){
     printf("\nQue quieres hacer con la cola?\n");
