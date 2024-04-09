@@ -25,90 +25,41 @@ void indicaciones(){
     printf("Opcion seleccionada: ");
 }
 
-void indicacionesInsercion(){
-    printf("Donde deseas ingresar el valor dentro de la lista?\n");
-    printf("1.- Al final de la lista\n");
-    printf("2.- Al inicio de la lista\n");
-    printf("3.- En medio de la lista\n");
-    printf("Valor de seleccion: ");
-}
-
-void IncertarAlFinal(Lista* l, Nodo n){
-    Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
-    nuevoNodo->val = n.val;
-    nuevoNodo->cadena = n.cadena;
-    if(l->tope == NULL){
-        nuevoNodo->sig = NULL;
-        nuevoNodo->anterior = NULL;
-        l->tope = nuevoNodo;
-        l->fin = nuevoNodo;   
-        l->sizeLista++;     
-    }
-    else{
-        nuevoNodo->sig = NULL;
-        nuevoNodo->anterior = l->fin;
-        l->fin->sig = nuevoNodo;    
-        l->fin = nuevoNodo;
-        l->sizeLista++;    
-    }
-}
-
-void InsertarAlInicio(Lista* l, Nodo n) {
-    Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo));
-    nuevoNodo->val = n.val;
-    nuevoNodo->cadena = n.cadena;
-
-    if (l->tope == NULL) {
-        nuevoNodo->sig = NULL;
-        nuevoNodo->anterior = NULL;
-        l->tope = nuevoNodo;
-        l->fin = nuevoNodo;
-        l->sizeLista++;
-    } else {
-        nuevoNodo->anterior = NULL;
-        nuevoNodo->sig = l->tope;
-        l->tope->anterior = nuevoNodo;
-        l->tope = nuevoNodo;
-        l->sizeLista++;
-    }
-}
-
 void InsertarValor(Lista* l, Nodo n){
-    Nodo* actual = l->tope; // Recorrer la lista
-    Nodo *nuevoNodo = (Nodo*)malloc(sizeof(Nodo)); // Nodo incertado
+    Nodo* actual = l->tope; // Puntero para recorrer la lista
+    Nodo* nuevoNodo = (Nodo*)malloc(sizeof(Nodo)); // Nodo a insertar
     nuevoNodo->val = n.val;
     nuevoNodo->cadena = n.cadena;
-    int valor;
-    if (l->tope == NULL) {
-        printf("La lista esta vacia, incertado al inicio predeterminado\n");
-        nuevoNodo->sig = NULL;
-        nuevoNodo->anterior = NULL;
-        l->tope = nuevoNodo;
-        l->fin = nuevoNodo;
-        l->sizeLista++;
-    }
-    else{
-    printf("Despues de que valor de la lista desea ingresar el nuevo nodo?\n");
-    scanf("%d", &valor);
 
-    // Buscar el nodo con el valor dado
-    while (actual != NULL && actual->val != valor) {
+    // Si la lista está vacía o el valor a insertar es menor que el primer valor
+    if (l->tope == NULL || n.val < l->tope->val) {
+        nuevoNodo->sig = l->tope;
+        nuevoNodo->anterior = NULL;
+        if (l->tope != NULL) {
+            l->tope->anterior = nuevoNodo;
+        } else {
+            l->fin = nuevoNodo; // Si la lista estaba vacía, el nuevo nodo será también el fin
+        }
+        l->tope = nuevoNodo; // El nuevo nodo ahora es el tope de la lista
+        l->sizeLista++;
+        return;
+    }
+
+    // Buscar la posición adecuada para insertar el nuevo nodo
+    while(actual->sig != NULL && actual->sig->val < n.val){
         actual = actual->sig;
     }
 
-    // Si no se encontró el valor en la lista
-    if (actual == NULL) {
-        printf("El valor no se encuentra en la lista\n");
+    // Insertar el nuevo nodo después del nodo actual
+    nuevoNodo->sig = actual->sig;
+    nuevoNodo->anterior = actual;
+    if (actual->sig != NULL) {
+        actual->sig->anterior = nuevoNodo;
+    } else {
+        l->fin = nuevoNodo; // Si el nodo actual es el último, el nuevo nodo será el fin
     }
-    else{
-        // Incertar el valor despues de la lista
-        nuevoNodo->sig = actual->sig;
-        actual->sig = nuevoNodo;
-        nuevoNodo->anterior = actual;
-        l->sizeLista++;
-    }
-    
-    }
+    actual->sig = nuevoNodo;
+    l->sizeLista++;
 }
 
 
@@ -198,24 +149,8 @@ int main(){
             fflush(stdin);
             n.cadena = (char*)malloc(100);
             scanf("%s",n.cadena);
-            indicacionesInsercion();
-            fflush(stdin);
-            scanf("%d",&op2);
-            switch (op2){
-                case 1:
-                    IncertarAlFinal(&lista,n);
-                    break;
-                case 2:
-                    InsertarAlInicio(&lista,n);
-                    break;
-                case 3:
-                    InsertarValor(&lista,n);
-                    break;
-                default:
-                    printf("Valor de seleccion no valido");
-                    break;
-                }
-            break;
+            InsertarValor(&lista,n);  
+            break;     
         case 2:
             nodo = eliminarValor(&lista);
             printf("Haz eliminado los valores:\n%d  %s",nodo->val, nodo->cadena);
