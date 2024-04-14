@@ -116,7 +116,7 @@ void instrucciones(){
 int validacion(int n, int size){
     fflush(stdin);
     scanf("%d",&n);
-    if(n > 0 && n <= size){
+    if(n >= 0 && n <= size){
         return n;
     }else{
         printf("Valor fuera de rango\nIngresa un valor (entre 0 y %d)",size);
