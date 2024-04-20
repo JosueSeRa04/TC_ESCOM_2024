@@ -34,10 +34,11 @@ void main(){
     char *p; 
     char *res;
     char *p2;
-    int size = 4;
-    int op = 0, n,s;
+    int size = 11;
+    int op = 0, n = 0,s = 0;
+
     p = (char*)malloc(size* sizeof(char));
-    p2 = (char*)malloc(size* sizeof(char));
+    p2 = (char*)malloc(5* sizeof(char));
     res = (char*)malloc(size * sizeof(char));
     
 
@@ -57,13 +58,12 @@ void main(){
             break;
          case 3:
             printf("Dame el valor del prefijo que quieres obtener: ");
-            n =  validacion(n,size);
+            n = validacion(n,size);
             printf("\nPrefijo obtenido: %s\n",prefijo(p,n));
             break;
         case 4:
             printf("Cuantas posiciones quieres remover de la cadena:");
             n =  validacion(n,size);
-            
             printf("\nSubsecuencia obtenida: %s\n",subsecuencia(p,n));
             break;
         case 5:
@@ -157,28 +157,33 @@ char* leerCadena(char* arr, int size){
     return arr;
 }
 
+// Funcion para prefijo que recibe una cadena y un valor n donde n es el numero de caracteres a quitar de derecha a izquierda
 char* sufijo(char* arr, int n){
-    int lo = sizeString(arr);
-    int i,j = 0;
-    char* nuevaCadena = (char*)malloc((lo - n)*sizeof(char));
-
-    for(i = (lo - n); i <= lo; i++){
-        nuevaCadena[j] = arr[i];
-        j++;
+    int i;
+    int len = sizeString(arr);
+    if(n > len) {
+        n = len;
     }
-
+    char* nuevaCadena = (char*)malloc((len - n + 1)*sizeof(char)); // +1 for the null terminator
+    for(i = n; i < len; i++){
+        nuevaCadena[i - n] = arr[i];
+    }
+    nuevaCadena[i - n] = '\0'; // add the null terminator
     return nuevaCadena;
 }
 
+// Funcion para sufijo que recibe una cadena y un valor n donde n es el numero de caracteres a quitar de izquierda a derecha
 char* prefijo(char* arr, int n){
     int i;
-    char* nuevaCadena = (char*)malloc(n*sizeof(char));
-
-    for(i = 0; i < n; i++){
+    int len = sizeString(arr);
+    if(n > len) {
+        n = len;
+    }
+    char* nuevaCadena = (char*)malloc((len - n + 1)*sizeof(char)); // +1 for the null terminator
+    for(i = 0; i < len - n; i++){
         nuevaCadena[i] = arr[i];
     }
-    nuevaCadena[i] = '\0';
-
+    nuevaCadena[i] = '\0'; // add the null terminator
     return nuevaCadena;
 }
 
