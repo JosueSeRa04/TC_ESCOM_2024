@@ -1,0 +1,223 @@
+/**
+ * Operaciones con lenguajes
+ * by: Serrano Ramos Josue
+ * ver: 0.0.1
+ * Last modf.: 20/04/2024
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include "Lista_doble.c"
+
+// Funcion de instrucciones
+void instrucciones(){
+    printf("\nInstrucciones:\n");
+    printf("1.- Incertar L(L1 y L2)\n");
+    printf("2.- Union L1 U L2\n");
+    printf("3.- Diferencia L1 - L2\n");
+    printf("4.- Inversa {L1,L2}\n");
+    printf("5.- Concatenacion L1 + L2\n");
+    printf("6.- Potencia L1^n\n");
+    printf("7.- Salir\n");
+}
+
+int compareStrings(char *str1, char *str2) {
+    while (*str1 && *str2) {
+        if (*str1 != *str2) {
+            return 0; // Las cadenas son diferentes
+        }
+        str1++;
+        str2++;
+    }
+    // Si ambos llegan al final, las cadenas son iguales
+    if (*str1 == '\0' && *str2 == '\0') {
+        return 1; // Las cadenas son iguales
+    } else {
+        return 0; // Las cadenas son diferentes en longitud
+    }
+}
+
+// Funcion para obtener los lengujes a incertar
+void incertarLenguajes(Lista*, Lista*);
+// Funcion para la union de lenguajes
+void Union(Lista*, Lista*);
+// Funcion para la diferencia de lenguajes
+void Diferencia(Lista*, Lista*);
+// Funcion para la inversa de lenguajes
+void Inversa(Lista*, Lista*);
+// Funcion para la concatenacion de lenguajes
+void Concatenacion(Lista*, Lista*);
+// Funcion para la potencia de lenguajes
+void Potencia(Lista*, int);
+
+// Programa para la implementacion de operaciones entre lenguajes
+void main(){
+    int opcion;
+    Lista L1;
+    Lista L2;
+    inicializarLista(&L1);
+    inicializarLista(&L2);
+
+    while(opcion != 7){
+        instrucciones();
+        printf("Ingrese la opcion deseada: ");
+        fflush(stdin);
+        scanf("%d", &opcion);
+        switch(opcion){
+            case 1:
+                incertarLenguajes(&L1, &L2);
+                break;
+            case 2:
+                Union(&L1, &L2);
+                break;
+            case 3:
+                Diferencia(&L1, &L2);
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                printf("Saliendo del programa\n");
+                break;
+            default:
+                printf("Opcion no valida\n");
+                break;
+        }
+    }
+
+}
+
+// Funcion para incertar lenguajes en las listas
+void incertarLenguajes(Lista* L1, Lista* L2){
+    Nodo n; // Nodo auxiliar para incertar valores
+    printf("Incerte los valores de L1\n");
+    printf("Cuantos valores desea incertar: ");
+    int valores; // Cantidad de valores a incertar
+    scanf("%d", &valores);
+
+    // Iteraciones para la incercion de valores en las listas (Ambos usos del ciclo for son validos)
+
+    for(int i = 0; i < valores; i++){
+        n.val = i+1; // Indices de referencia de incremento en la lista
+        printf("Cadena %d: ", i+1);
+        n.cadena = (char*)malloc(100); // Reservar memoria para la cadena
+        scanf("%s", n.cadena);
+        InsertarValor(L1, n); // Incertar los valores generados dentro de la lista 1
+    }
+    printf("Incerte los valores de L2\n");
+    printf("Cuantos valores desea incertar: ");
+    scanf("%d", &valores);
+    for(int i = 0; i < valores; i++){
+        n.val = i+1; // Indices de referencia de incremento en la lista
+        printf("Cadena %d: ", i+1);
+        n.cadena = (char*)malloc(100); // Reservar memoria para la cadena
+        scanf("%s", n.cadena);
+        InsertarValor(L2, n); // Incertar los valores generados dentro de la lista 2
+    }
+}
+
+// Funcion para la union de lenguajes
+void Union(Lista* L1, Lista* L2){
+    Lista L3; // Lista para la union de los lenguajes
+    int i= 0; // Indice de referencia para la incercion de valores en la lista 3
+    inicializarLista(&L3);
+
+    // Incertar los valores de la lista 1 en la lista 3
+    Nodo* temp = L1->tope; // Nodo auxiliar para recorrer la lista 1
+    while(temp != NULL){
+        InsertarValor(&L3, *temp);
+        temp = temp->sig;
+    }
+
+    // Incertar los valores de la lista 2 en la lista 3 sin repetir valores de la lista 1
+    temp = L2->tope;
+    while(temp != NULL){
+        Nodo* actual = L3.tope; // Nodo auxiliar para recorrer la lista 3
+        while(actual != NULL){
+            // Comparar las cadenas de los nodos de las listas 1 y 2 para evitar repeticiones
+            if(compareStrings(temp->cadena, actual->cadena)){
+                break;
+            }
+            // Si el valor no es igual entonces se itera al siguiente nodo
+            actual = actual->sig;
+        }
+        // Si el valor no se repite, se incerta en la lista 3
+        if(actual == NULL){
+            // Ajustar el valor del nodo en la lista 3
+            InsertarValor(&L3, *temp);
+        }
+        temp = temp->sig;
+    }
+
+    // Ajustar los valores de los nodos de la lista 3 de forma ascedente
+    Nodo* actual = L3.tope;
+    while(actual != NULL){
+        actual->val = i+1; // Ajustar el valor del nodo
+        i++; // Incrementar el indice de referencia
+        actual = actual->sig;
+    }
+    
+    printf("La union de los lenguajes es: \n");
+    imprimirLista(&L3);
+}
+
+// Funcion para la diferencia de lenguajes
+void Diferencia(Lista* L1, Lista* L2){
+    Lista L3; // Lista para la diferencia de los lenguajes
+    inicializarLista(&L3);
+    int seleccion;
+
+    printf("Seleccione la diferencia deseada: \n");
+    printf("1.- L1 - L2\n");
+    printf("2.- L2 - L1\n");
+    printf("Opcion: ");
+    fflush(stdin);
+    scanf("%d", &seleccion);
+
+    if(seleccion == 1){
+        // Incertar los valores de la lista 1 en la lista 3 que no esten dentro de la lista 2
+        Nodo* temp = L1->tope; // Nodo auxiliar para recorrer la lista 1
+        while(temp != NULL){
+            Nodo* actual = L2->tope; // Nodo auxiliar para recorrer la lista 2
+            while(actual != NULL){
+                // Comparar las cadenas de los nodos de las listas 1 y 2 para evitar repeticiones
+                if(compareStrings(temp->cadena, actual->cadena)){
+                    break;
+                }
+                // Si el valor no es igual entonces se itera al siguiente nodo
+                actual = actual->sig;
+            }
+            // Si el valor no se repite, se incerta en la lista 3
+            if(actual == NULL){
+                // Ajustar el valor del nodo en la lista 3
+                InsertarValor(&L3, *temp);
+            }
+            temp = temp->sig;
+        }
+    }
+    else if(seleccion == 2){
+        // Incertar los valores de la lista 2 en la lista 3 que no esten dentro de la lista 1
+        Nodo* temp = L2->tope; // Nodo auxiliar para recorrer la lista 2
+        while(temp != NULL){
+            Nodo* actual = L1->tope; // Nodo auxiliar para recorrer la lista 1
+            while(actual != NULL){
+                // Comparar las cadenas de los nodos de las listas 1 y 2 para evitar repeticiones
+                if(compareStrings(temp->cadena, actual->cadena)){
+                    break;
+                }
+                // Si el valor no es igual entonces se itera al siguiente nodo
+                actual = actual->sig;
+            }
+            // Si el valor no se repite, se incerta en la lista 3
+            if(actual == NULL){
+                // Ajustar el valor del nodo en la lista 3
+                InsertarValor(&L3, *temp);
+            }
+            temp = temp->sig;
+        }
+    }
+    printf("La diferencia de los lenguajes es: \n");
+    imprimirLista(&L3); 
+}
