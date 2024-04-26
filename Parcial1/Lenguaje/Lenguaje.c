@@ -1,12 +1,64 @@
 /**
  * Operaciones con lenguajes
  * by: Serrano Ramos Josue
- * ver: 0.0.1
- * Last modf.: 20/04/2024
+ * ver: 0.1.1
+ * Last modf.: 25/04/2024
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include "Lista_doble.c"
+
+// Funcion para obtener el tamaño de una cadena de caracteres
+int sizeString(char* arr){
+    int i = 0;
+    while(arr[i] != '\0'){
+        i++;
+    }
+    return i;
+}
+
+// Funcion para concatenar dos cadenas de caracteres
+char* concat(char* arr1, char* arr2){
+    int size1 = sizeString(arr1);
+    int size2 = sizeString(arr2);
+    int newSize = size1 + size2 + 1;
+
+    char* result = (char*)malloc(newSize * sizeof(char));
+
+    int i, j;
+
+    // Copiar la primera cadena
+    for(i = 0; i < size1; i++){
+        result[i] = arr1[i];
+    }
+
+    // Copiar la segunda cadena
+    for(j = 0; j < size2; j++){
+        result[i + j] = arr2[j];
+    }
+
+    result[i + j] = '\0';
+
+    return result;
+}
+
+// Funcion para la inversion de una cadena
+char* reverse(char* arr){
+    int i, j;
+    int size = sizeString(arr);
+    char* nuevaCadena = (char*)malloc((size + 1) * sizeof(char));
+    char cambio;
+    j = size - 1;
+    i = 0;
+    while(arr[i] != '\0'){
+        cambio = arr[i];
+        nuevaCadena[j] = cambio;
+        j--;
+        i++;
+    }
+    nuevaCadena[size] = '\0'; 
+    return nuevaCadena;
+}
 
 // Funcion de instrucciones
 void instrucciones(){
@@ -14,9 +66,9 @@ void instrucciones(){
     printf("1.- Incertar L(L1 y L2)\n");
     printf("2.- Union L1 U L2\n");
     printf("3.- Diferencia L1 - L2\n");
-    printf("4.- Inversa {L1,L2}\n");
+    printf("4.- Inversa {L1 o L2}\n");
     printf("5.- Concatenacion L1 + L2\n");
-    printf("6.- Potencia L1^n\n");
+    printf("6.- Potencia L1^n o L2^n\n");
     printf("7.- Salir\n");
 }
 
@@ -52,6 +104,7 @@ void Potencia(Lista*, int);
 // Programa para la implementacion de operaciones entre lenguajes
 void main(){
     int opcion;
+    int n;
     Lista L1;
     Lista L2;
     inicializarLista(&L1);
@@ -73,10 +126,16 @@ void main(){
                 Diferencia(&L1, &L2);
                 break;
             case 4:
+                Inversa(&L1, &L2);
                 break;
             case 5:
+                Concatenacion(&L1, &L2);
                 break;
             case 6:
+                printf("Ingrese el valor de n: ");
+                fflush(stdin);
+                scanf("%d", &n);
+                Potencia(&L1, n);
                 break;
             case 7:
                 printf("Saliendo del programa\n");
@@ -220,4 +279,88 @@ void Diferencia(Lista* L1, Lista* L2){
     }
     printf("La diferencia de los lenguajes es: \n");
     imprimirLista(&L3); 
+}
+
+void Inversa(Lista* L1, Lista* L2){
+    Lista L3; // Lista para la inversa de los lenguajes
+    inicializarLista(&L3);
+    Nodo auxiliar;
+    auxiliar.cadena = (char*)malloc(100);
+    int seleccion;
+
+    printf("Seleccione la inversa deseada: \n");
+    printf("1.- {L1}\n");
+    printf("2.- {L2}\n");
+    printf("Opcion: ");
+    fflush(stdin);
+    scanf("%d", &seleccion);
+
+    if(seleccion == 1){
+        // Incertar los valores de la lista 1 en la lista 3 de forma inversa
+        Nodo* temp = L1->tope; // Nodo auxiliar para recorrer la lista 1
+        while(temp != NULL){
+            auxiliar.cadena = temp->cadena;
+            auxiliar.val = temp->val;
+            auxiliar.cadena = reverse(auxiliar.cadena);
+            InsertarValor(&L3, auxiliar);
+            temp = temp->sig;
+        }
+    }
+    else if(seleccion == 2){
+        // Incertar los valores de la lista 2 en la lista 3 de forma inversa
+        Nodo* temp = L2->tope; // Nodo auxiliar para recorrer la lista 2
+        while(temp != NULL){
+            auxiliar.cadena = temp->cadena;
+            auxiliar.val = temp->val;
+            auxiliar.cadena = reverse(auxiliar.cadena);
+            InsertarValor(&L3, auxiliar);
+            temp = temp->sig;
+        }
+    }
+    printf("La inversa de los lenguajes es: \n");
+    imprimirLista(&L3); 
+}
+
+void Concatenacion(Lista* L1, Lista* L2){
+    Lista L3; // Lista para la concatenacion de los lenguajes
+    inicializarLista(&L3);
+    Nodo auxiliar;
+    auxiliar.cadena = (char*)malloc(100);
+    // Concatenar las cadenas de los lenguajes
+    Nodo* temp1 = L1->tope; // Nodo auxiliar para recorrer la lista 1
+    Nodo* temp2 = L2->tope; // Nodo auxiliar para recorrer la lista 2
+    while(temp1 != NULL){
+        while(temp2 != NULL){
+            auxiliar.cadena = concat(temp1->cadena, temp2->cadena);
+            auxiliar.val = temp1->val;
+            InsertarValor(&L3, auxiliar);
+            temp2 = temp2->sig;
+        }
+        temp2 = L2->tope;
+        temp1 = temp1->sig;
+    }
+    printf("La concatenacion de los lenguajes es: \n");
+    imprimirLista(&L3);
+}
+
+// Funcion para la potencia de lenguajes
+void Potencia(Lista* L1, int n){
+    Lista L3; // Lista para la potencia de los lenguajes
+    inicializarLista(&L3);
+    Nodo auxiliar;
+    auxiliar.cadena = (char*)malloc(100);
+    // Potencia de los lenguajes
+    Nodo* temp = L1->tope; // Nodo auxiliar para recorrer la lista 1
+    // Guardar en la lista L3 la concatenacion de las cadenas de L1 n veces
+    auxiliar.cadena = temp->cadena;
+    while(temp != NULL){
+        for(int i = 0; i < n; i++){
+            auxiliar.cadena = concat(auxiliar.cadena, temp->cadena);
+        }
+        auxiliar.val = temp->val;
+        InsertarValor(&L3, auxiliar);
+        temp = temp->sig;
+    }
+    printf("La potencia de los lenguajes es: \n");
+    imprimirLista(&L3);
 }
