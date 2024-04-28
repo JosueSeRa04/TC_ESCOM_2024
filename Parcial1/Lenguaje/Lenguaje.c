@@ -1,8 +1,8 @@
 /**
  * Operaciones con lenguajes
  * by: Serrano Ramos Josue
- * ver: 0.1.1
- * Last modf.: 25/04/2024
+ * ver: 1.3.1
+ * Last modf.: 27/04/2024
 */
 #include <stdio.h>
 #include <stdlib.h>
