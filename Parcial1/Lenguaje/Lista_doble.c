@@ -109,4 +109,32 @@ void inicializarLista(Lista* l) {
     l->sizeLista = 0;
 }
 
+
+// Funcion para vaciar lista
+void vaciarLista(Lista* l) {
+    Nodo* actual = l->tope;
+    Nodo* temp = NULL;
+
+    while (actual != NULL) {
+        temp = actual;
+        actual = actual->sig;
+        free(temp);
+    }
+
+    l->tope = NULL;
+    l->fin = NULL;
+    l->sizeLista = 0;
+}
+
+// Funcion para copiar lista
+void copiarLista(Lista* l1, Lista* l2) {
+    vaciarLista(l2);
+    Nodo* actual = l1->tope;
+
+    while (actual != NULL) {
+        InsertarValor(l2, *actual);
+        actual = actual->sig;
+    }
+}
+
 // Path: Parcial1/Lenguaje/Lenguaje.c

@@ -104,6 +104,7 @@ void Potencia(Lista*, int);
 // Programa para la implementacion de operaciones entre lenguajes
 void main(){
     int opcion;
+    int seleccion;
     int n;
     Lista L1;
     Lista L2;
@@ -129,13 +130,33 @@ void main(){
                 Inversa(&L1, &L2);
                 break;
             case 5:
-                Concatenacion(&L1, &L2);
+                // Seleccionar si concatenar L1 con L2 o L2 con L1
+                printf("Seleccione la concatenacion deseada: \n");
+                printf("1.- L1 + L2\n");
+                printf("2.- L2 + L1\n");
+                printf("Opcion: ");
+                fflush(stdin);
+                scanf("%d", &seleccion);
+                if(seleccion == 1)
+                    Concatenacion(&L1, &L2);
+                else if(seleccion == 2)
+                    Concatenacion(&L2, &L1);
                 break;
             case 6:
                 printf("Ingrese el valor de n: ");
                 fflush(stdin);
                 scanf("%d", &n);
-                Potencia(&L1, n);
+                // Seleccionar el lenguaje a elevar a la potencia
+                printf("Seleccione el lenguaje a elevar a la potencia: \n");
+                printf("1.- L1\n");
+                printf("2.- L2\n");
+                printf("Opcion: ");
+                fflush(stdin);
+                scanf("%d", &seleccion);
+                if(seleccion == 1)
+                    Potencia(&L1, n);
+                else if(seleccion == 2)
+                    Potencia(&L2, n);
                 break;
             case 7:
                 printf("Saliendo del programa\n");
@@ -343,24 +364,66 @@ void Concatenacion(Lista* L1, Lista* L2){
     imprimirLista(&L3);
 }
 
-// Funcion para la potencia de lenguajes
-void Potencia(Lista* L1, int n){
-    Lista L3; // Lista para la potencia de los lenguajes
-    inicializarLista(&L3);
-    Nodo auxiliar;
-    auxiliar.cadena = (char*)malloc(100);
-    // Potencia de los lenguajes
-    Nodo* temp = L1->tope; // Nodo auxiliar para recorrer la lista 1
-    // Guardar en la lista L3 la concatenacion de las cadenas de L1 n veces
-    auxiliar.cadena = temp->cadena;
-    while(temp != NULL){
-        for(int i = 0; i < n; i++){
-            auxiliar.cadena = concat(auxiliar.cadena, temp->cadena);
-        }
-        auxiliar.val = temp->val;
-        InsertarValor(&L3, auxiliar);
-        temp = temp->sig;
+void Potencia(Lista* L1, int n) {
+    int iteraciones = n;
+    Lista L_temp; // Lista temporal para almacenar la concatenación parcial
+    inicializarLista(&L_temp);
+
+    // Guardar una copia de la lista original para no perder los valores
+    Lista L_copia;
+    inicializarLista(&L_copia);
+    copiarLista(L1, &L_copia);
+
+    if(n < 0){
+        // Si el valor es negativo su valor se pasa a positivo para realizar la operacion
+        n = n * -1;
     }
-    printf("La potencia de los lenguajes es: \n");
-    imprimirLista(&L3);
+
+    // Realizar la concatenación de la lista original n veces
+    while(n > 1) {
+        // Concatenar la lista original con la lista temporal
+        Nodo* temp1 = L_copia.tope;
+        while(temp1 != NULL) {
+            Nodo* temp2 = L1->tope;
+            while(temp2 != NULL) {
+                Nodo nuevo;
+                nuevo.val = temp1->val;
+                nuevo.cadena = concat(temp1->cadena, temp2->cadena);
+                InsertarValor(&L_temp, nuevo);
+                temp2 = temp2->sig;
+            }
+            temp1 = temp1->sig;
+        }
+
+        // Copiar la lista temporal en la lista original
+        copiarLista(&L_temp, L1);
+        vaciarLista(&L_temp);
+
+        // Decrementar el valor de n
+        n--;
+    }
+
+    // Imprimir el resultado final
+    printf("El lenguaje L1 elevado a la potencia %d es: \n", iteraciones);
+    // Invertir la lista si iteraciones es < 0 
+    if(iteraciones < 0){
+        Lista L_inversa;
+        inicializarLista(&L_inversa);
+        Nodo auxiliar;
+        auxiliar.cadena = (char*)malloc(100);
+        Nodo* temp = L1->tope;
+            while(temp != NULL){
+                auxiliar.cadena = temp->cadena;
+                auxiliar.val = temp->val;
+                auxiliar.cadena = reverse(auxiliar.cadena);
+                InsertarValor(&L_inversa, auxiliar);
+                temp = temp->sig;
+            }
+        imprimirLista(&L_inversa);}
+    else{
+        imprimirLista(L1);
+    }
+    // Restaurar la lista original
+    copiarLista(&L_copia, L1);
+    vaciarLista(&L_copia);
 }
