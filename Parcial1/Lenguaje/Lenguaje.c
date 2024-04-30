@@ -1,8 +1,8 @@
 /**
  * Operaciones con lenguajes
  * by: Serrano Ramos Josue
- * ver: 1.3.1
- * Last modf.: 27/04/2024
+ * ver: 2.1.1
+ * Last modf.: 30/04/2024
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -390,7 +390,21 @@ void Potencia(Lista* L1, int n) {
                 Nodo nuevo;
                 nuevo.val = temp1->val;
                 nuevo.cadena = concat(temp1->cadena, temp2->cadena);
-                InsertarValor(&L_temp, nuevo);
+                // Verificar si la cadena ya existe en la lista temporal
+                Nodo* actual = L_temp.tope;
+                int repetido = 0;
+                while(actual != NULL) {
+                    if(compareStrings(actual->cadena, nuevo.cadena)) {
+                        repetido = 1;
+                        break;
+                    }
+                    actual = actual->sig;
+                }
+
+                // Si la cadena no se repite, se incerta en la lista temporal
+                if(!repetido){
+                    InsertarValor(&L_temp, nuevo);
+                    }
                 temp2 = temp2->sig;
             }
             temp1 = temp1->sig;
@@ -412,19 +426,6 @@ void Potencia(Lista* L1, int n) {
         actual = actual->sig;
     }
 
-    // Eliminar cadenas repetidas
-    Nodo* temp1 = L1->tope;
-    while(temp1 != NULL) {
-        Nodo* temp2 = temp1->sig;
-        while(temp2 != NULL) {
-            if(compareStrings(temp1->cadena, temp2->cadena)) {
-                eliminarValor(L1, temp2->val);
-            }
-            temp2 = temp2->sig;
-        }
-        temp1 = temp1->sig;
-    }
-    
     // Imprimir el resultado final
     printf("El lenguaje L1 elevado a la potencia %d es: \n", iteraciones);
     // Invertir la lista si iteraciones es < 0 
@@ -449,3 +450,24 @@ void Potencia(Lista* L1, int n) {
     copiarLista(&L_copia, L1);
     vaciarLista(&L_copia);
 }
+
+
+/*
+Cambios realizados: Se elimino la seccion de "Eliminar cadena repetida" y se implemento una verificacion durante
+la concatenacion de las cadenas para evitar la incercion de cadenas repetidas en la lista temporal.
+
+Codigo quitado:
+
+    /* // Eliminar cadenas repetidas
+    Nodo* temp1 = L1->tope;
+    while(temp1 != NULL) {
+        Nodo* temp2 = temp1->sig;
+        while(temp2 != NULL) {
+            if(compareStrings(temp1->cadena, temp2->cadena)) {
+                eliminarValor(L1, temp2->val);
+            }
+            temp2 = temp2->sig;
+        }
+        temp1 = temp1->sig;
+    }
+ */    
