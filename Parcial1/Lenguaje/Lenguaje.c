@@ -403,6 +403,20 @@ void Potencia(Lista* L1, int n) {
         n--;
     }
 
+    // Eliminar las cadenas que se repiten
+    Nodo* temp1 = L1->tope;
+    while(temp1 != NULL) {
+        Nodo* temp2 = temp1->sig;
+        while(temp2 != NULL) {
+            if(compareStrings(temp1->cadena, temp2->cadena)) {
+                EliminarValor(L1, temp2->val);
+            }
+            temp2 = temp2->sig;
+        }
+        temp1 = temp1->sig;
+    }
+
+
     // Imprimir el resultado final
     printf("El lenguaje L1 elevado a la potencia %d es: \n", iteraciones);
     // Invertir la lista si iteraciones es < 0 
