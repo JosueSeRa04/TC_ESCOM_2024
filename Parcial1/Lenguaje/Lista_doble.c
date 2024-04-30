@@ -43,15 +43,11 @@ void InsertarValor(Lista* l, Nodo n){
 }
 
 
-Nodo* eliminarValor(Lista* l) {
+Nodo* eliminarValor(Lista* l, int valor) {
     if (l == NULL || l->tope == NULL) {
         printf("Error: Lista vacia\n");
         return NULL;
     }
-
-    int valor;
-    printf("Que valor de la lista desea eliminar?\n");
-    scanf("%d", &valor);
 
     Nodo* actual = l->tope;
 

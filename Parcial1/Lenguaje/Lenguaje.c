@@ -366,6 +366,7 @@ void Concatenacion(Lista* L1, Lista* L2){
 
 void Potencia(Lista* L1, int n) {
     int iteraciones = n;
+    int i = 0;
     Lista L_temp; // Lista temporal para almacenar la concatenación parcial
     inicializarLista(&L_temp);
 
@@ -403,20 +404,27 @@ void Potencia(Lista* L1, int n) {
         n--;
     }
 
-    // Eliminar las cadenas que se repiten
+    // Ajustar los valores de los nodos de la lista 3 de forma ascedente
+    Nodo* actual = L1->tope;
+    while(actual != NULL){
+        actual->val = i+1; // Ajustar el valor del nodo
+        i++; // Incrementar el indice de referencia
+        actual = actual->sig;
+    }
+
+    // Eliminar cadenas repetidas
     Nodo* temp1 = L1->tope;
     while(temp1 != NULL) {
         Nodo* temp2 = temp1->sig;
         while(temp2 != NULL) {
             if(compareStrings(temp1->cadena, temp2->cadena)) {
-                EliminarValor(L1, temp2->val);
+                eliminarValor(L1, temp2->val);
             }
             temp2 = temp2->sig;
         }
         temp1 = temp1->sig;
     }
-
-
+    
     // Imprimir el resultado final
     printf("El lenguaje L1 elevado a la potencia %d es: \n", iteraciones);
     // Invertir la lista si iteraciones es < 0 
