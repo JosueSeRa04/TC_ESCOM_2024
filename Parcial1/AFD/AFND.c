@@ -2,8 +2,8 @@
  * Automata Finito No Determinista 
  * Por: Josué Serrano Ramos
  * Carrera: Ingeniería en Inteligencia Artificial
- * Versión: 1.0
- * Última modificación: 2024-05-18
+ * Versión: 1.4
+ * Última modificación: 2024-05-19
  * Lenguaje: C
  */
 
