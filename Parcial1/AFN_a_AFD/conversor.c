@@ -10,6 +10,41 @@
 
 // Definir el tamaño de la linea del archivo
 #define LEN 256
+#define MAX_LINE_LENGTH 256
+#define MAX_LINES 100
+#define MAX_TRANSITIONS 100
+
+// Definir una estructura para almacenar las transiciones
+typedef struct {
+    char origen[MAX_LINE_LENGTH];
+    char simbolo;
+    char destino[MAX_LINE_LENGTH];
+} Transicion;
+
+// Función para concatenar dos cadenas
+void my_strcat(char *dest, const char *src) {
+    while (*dest != '\0') {
+        dest++;
+    }
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+}
+
+// Funcion para comparar dos cadenas
+char* my_strcmp(const char *str1, const char *str2) {
+    while (*str1 != '\0' && *str2 != '\0') {
+        if (*str1 != *str2) {
+            return (char *)str1;
+        }
+        str1++;
+        str2++;
+    }
+    return NULL;
+}
 
 // Función para obtener la longitud de una cadena
 int my_strlen(const char *str) {
@@ -39,6 +74,16 @@ char *my_strstr(const char *haystack, const char *needle) {
     }
 
     return NULL;
+}
+
+// Función para copiar una cadena
+void my_strcpy(char *dest, const char *src) {
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
 }
 
 // Función para dividir una cadena por comas
@@ -143,6 +188,7 @@ void subconjuntos_Q(char** estados, int countQ, FILE* archivo) {
     fprintf(archivo, "\n");
 }
 
+// Funcion para generar los subconjuntos de la cuarta linea
 void subconjuntos_F(char** estadosFinalesNFA, int countF, FILE* archivo) {
     char line[LEN];
     FILE* archivoSalida = fopen("output.txt", "r");
@@ -179,7 +225,96 @@ void subconjuntos_F(char** estadosFinalesNFA, int countF, FILE* archivo) {
     fprintf(archivoSalida, "\n");
 }
 
+// Función para leer las líneas del archivo desde la línea 'start_line' hasta la línea 'end_line'
+char** leerLineasDesde(char* nombreArchivo, int start_line, int end_line, int* num_lineas) {
+    FILE* archivo = fopen(nombreArchivo, "r");
+    if (archivo == NULL) {
+        printf("Error al abrir el archivo.\n");
+        exit(1);
+    }
+
+    // Mover el puntero de archivo a la línea start_line
+    for (int i = 1; i < start_line; i++) {
+        char buffer[MAX_LINE_LENGTH];
+        if (fgets(buffer, MAX_LINE_LENGTH, archivo) == NULL) {
+            printf("Error: No hay suficientes líneas en el archivo.\n");
+            exit(1);
+        }
+    }
+
+    // Leer y almacenar las líneas desde start_line hasta end_line
+    char** lineas = malloc(MAX_LINES * sizeof(char*));
+    int num_lineas_leidas = 0;
+    char buffer[MAX_LINE_LENGTH];
+    while (fgets(buffer, MAX_LINE_LENGTH, archivo) != NULL && num_lineas_leidas < MAX_LINES && num_lineas_leidas < end_line - start_line + 1) {
+        lineas[num_lineas_leidas] = malloc(MAX_LINE_LENGTH * sizeof(char));
+        my_strcpy(lineas[num_lineas_leidas], buffer);
+        num_lineas_leidas++;
+    }
+
+    *num_lineas = num_lineas_leidas;
+    fclose(archivo);
+    return lineas;
+}
+
+
+void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* archivoSalida) {
+    Transicion transicionesArray[MAX_TRANSITIONS];
+    char simbolos[MAX_TRANSITIONS];
+    int numEstados = 0, numSimbolos = 0;
+    imprimirArchivo(archivoSalida); 
+    // Procesar las transiciones originales y almacenarlas en la matriz de estructuras
+    for (int i = 0; i < numTransiciones; i++) {
+        char* transicion = transiciones[i];
+        int subCount = 0;
+        char** Subtransicion = split(transicion, &subCount);
+
+        if (subCount != 3) {
+            printf("Error: Transición mal formateada en la línea %d\n", i + 1);
+            continue;
+        }
+
+        char* estadoOrigen = Subtransicion[0];
+        char* simbolo = Subtransicion[1];
+        char* estadoDestino = Subtransicion[2];
+
+        estadoDestino[my_strlen(estadoDestino) - 1] = '\0';
+
+        my_strcpy(transicionesArray[numEstados].origen, estadoOrigen);
+        transicionesArray[numEstados].simbolo = simbolo[0];
+        my_strcpy(transicionesArray[numEstados].destino, estadoDestino);
+
+        // Guardar el símbolo si es nuevo
+        int simboloExistente = 0;
+        for (int j = 0; j < numSimbolos; j++) {
+            if (simbolos[j] == simbolo[0]) {
+                simboloExistente = 1;
+                break;
+            }
+        }
+        if (!simboloExistente) {
+            simbolos[numSimbolos++] = simbolo[0];
+        }
+
+        for (int j = 0; j < subCount; j++) {
+            free(Subtransicion[j]);
+        }
+        free(Subtransicion);
+
+        numEstados++;
+    }
+    // Imprimir la matriz de tracisiones en el documento de salida en la quinta linea del archivo
+    for (int i = 0; i < numEstados; i++) {
+        fprintf(archivoSalida, "%s,%c,%s\n", transicionesArray[i].origen, transicionesArray[i].simbolo, transicionesArray[i].destino);
+    }   
+
+
+
+}
+
+// Funcion para convertir todo el archivo a un DFA
 void conversor(FILE* archivo){
+    char** transiciones = NULL;
     FILE *output = fopen("output.txt", "w");
     char linea[LEN];
     // Procesar la primera linea del archivo (Conjunto Q)
@@ -198,12 +333,29 @@ void conversor(FILE* archivo){
     agregarLinea(linea);
     // Cerrado temporal
     fclose(output);
-    output = fopen("output.txt", "a");
+    output = fopen("output.txt", "a");  
     // Leer la cuarta línea del archivo (Conjunto F)
     leerLinea(archivo, linea, LEN);
     int countF;
     result = split(linea, &countF);
     subconjuntos_F(result, countF, output);
+    fclose(output);
+    output = fopen("output.txt", "r+");
+    // Leer las lineas de transiciones
+    // Contador de líneas leídas
+    int lineasLeidas = 0;
+
+    // Leer las primeras cuatro líneas del archivo de salida
+    while (lineasLeidas < 4) {
+        leerLinea(archivo, linea, LEN);
+        lineasLeidas++;
+    }
+
+    int numTransiciones;
+    transiciones = leerLineasDesde("data.txt", 5, 11, &numTransiciones);
+    // Generar las nuevas transiciones con los nuevos estados del DFA
+    generarNuevasTransiciones(transiciones, numTransiciones, output);
+
 }
 
 int main(){
