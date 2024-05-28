@@ -537,4 +537,5 @@ int main(){
     FILE* archivo = leerArchivo("data.txt");
     conversor(archivo); 
     fclose(archivo);
+    return 0;
 }
