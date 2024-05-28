@@ -15,7 +15,7 @@
 #define MAX_TRANSITIONS 100
 
 int lineasTotales = 17;
-
+char estadoInicial[LEN];
 // Definir una estructura para almacenar las transiciones
 typedef struct {
     char origen[MAX_LINE_LENGTH];
@@ -504,8 +504,11 @@ void conversor(FILE* archivo){
     agregarLinea(linea);
     // Leer la tercera línea del archivo (Conjunto S)
     leerLinea(archivo, linea, LEN);
+    // Guardar la linea en una variable para su uso posterior
+    my_strcpy(estadoInicial, linea);
+    fprintf(output,"%s\n",estadoInicial);
     int countS;
-    agregarLinea(linea);
+    //agregarLinea(linea);
     // Cerrado temporal
     fclose(output);  
     // Leer la cuarta línea del archivo (Conjunto F)
@@ -527,6 +530,7 @@ void conversor(FILE* archivo){
     transiciones = leerLineasDesde("data.txt", 5, lineasTotales, &numTransiciones);
     // Generar las nuevas transiciones con los nuevos estados del DFA
     generarNuevasTransiciones(transiciones, numTransiciones, output);
+    fclose(output);
 }
 
 int main(){
