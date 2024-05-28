@@ -14,7 +14,7 @@
 #define MAX_LINES 100
 #define MAX_TRANSITIONS 100
 
-int lineasTotales = 14;
+int lineasTotales = 17;
 
 // Definir una estructura para almacenar las transiciones
 typedef struct {
@@ -65,6 +65,8 @@ char* my_strcmp(const char *str1, const char *str2) {
         str1++;
         str2++;
     }
+    
+
     // Si una cadena es más larga que la otra, devolver la dirección de memoria del primer carácter diferente
     if (*str1 != '\0' || *str2 != '\0') {
         return NULL;
@@ -150,6 +152,32 @@ char **split(char *str, int *count) {
     
     *count = len;
     return result;
+}
+
+// Función para verificar si dos cadenas son anagramas
+int son_anagramas(char* str1, char* str2) {
+    printf("Funcion son_anagramas\n");
+    printf("str1: %s\n", str1);
+    printf("str2: %s\n", str2);
+    // Si las longitudes de las cadenas no son iguales, no pueden ser anagramas
+    if (my_strlen(str1) != my_strlen(str2)) {
+        return 0;
+    }
+    int encontrado = 0;
+    // Verificar que cada caracter de str1 esté presente en str2
+    for (int i = 0; i < my_strlen(str1); i++) {
+        for (int j = 0; j < my_strlen(str2); j++) {
+            if (str1[i] == str2[j]) {
+                encontrado += 1;
+            }
+        }
+        printf("Encontrado: %d\n", encontrado);
+        if (encontrado == my_strlen(str2)) {
+            return 1;
+        }
+    }
+    return 0;
+    
 }
 
 // Funcion para leer un archivo
@@ -303,7 +331,6 @@ int esOrigen(char* estado, Transicion transiciones[], int numTransiciones) {
 
 // Función para encontrar transiciones de un nuevo origen
 void encontrarTransicionesDeNuevoOrigen(char* nuevoOrigen, Transicion transicionesArray[], int numEstados, char simbolos[], int numSimbolos, Transicion nuevasTransiciones[], int* numNuevasTransiciones) {
-    printf("Nuevo origen: %s\n", nuevoOrigen);
     for (int s = 0; s < numSimbolos; s++) {
         char simboloActual = simbolos[s];
         char destinoConcat[MAX_LINE_LENGTH * 2] = "";
@@ -312,26 +339,20 @@ void encontrarTransicionesDeNuevoOrigen(char* nuevoOrigen, Transicion transicion
             if (my_strstr(nuevoOrigen, transicionesArray[z].origen) != NULL && transicionesArray[z].simbolo == simboloActual) {
                 if (transicionesArray[z].destino[0] != 'E' && my_strstr(destinoConcat, transicionesArray[z].destino) == NULL){
                     my_strcat(destinoConcat, transicionesArray[z].destino);
-                    printf("Simbolo actual: %c\n", simboloActual);
-                    printf("destinoConcat: %s\n", destinoConcat);
                 }
             }
         }
-        printf("Iteracion de simbolos terminada\n");
         // Verificar si el destino concatenado cumple la condición de ser un origen
         if (destinoConcat[0] != '\0') {
-            printf("Cumplio la condicion\n");
             int encontrado = 0;
             for (int k = 0; k < *numNuevasTransiciones; k++) {
                 // Evitar duplicados en nuevas transiciones 
                 if (my_strcmp2(nuevasTransiciones[k].origen, nuevoOrigen) == 0 && nuevasTransiciones[k].simbolo == simboloActual) {
-                    printf("nuevasTransiciones[%d].origen: %s\n", k, nuevasTransiciones[k].origen);
                     encontrado = 1;
                     break;
                 }
             }
             if (!encontrado) {
-                printf("Nuevo origen a concatenar: %s\n", nuevoOrigen);
                 my_strcpy(nuevasTransiciones[*numNuevasTransiciones].origen, nuevoOrigen);
                 nuevasTransiciones[*numNuevasTransiciones].simbolo = simboloActual;
                 my_strcpy(nuevasTransiciones[*numNuevasTransiciones].destino, destinoConcat);
@@ -389,8 +410,7 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
     }
     // Generar nuevas transiciones
     Transicion nuevasTransiciones[MAX_TRANSITIONS];
-    int numNuevasTransiciones = 0; // Contador de nuevas transiciones
-    printf("Numero de transiciones: %d\n", numTransiciones);    
+    int numNuevasTransiciones = 0; // Contador de nuevas transiciones 
     // Generar nuevas transiciones para cada par de transiciones con el mismo origen y símbolo
     for (int i = 0; i < numTransiciones; i++) {
         for (int j = 1; j < numTransiciones; j++) {
@@ -400,10 +420,11 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
                 char nuevoDestino[MAX_LINE_LENGTH * 2];
                 my_strcpy(nuevoDestino, transicionesArray[i].destino);
                 my_strcat(nuevoDestino, transicionesArray[j].destino);
-
+                printf("Nuevo destino: %s\n", nuevoDestino);
                 // Iterar sobre todos los símbolos posibles
                 for (int s = 0; s < numSimbolos; s++) {
                     char simboloActual = simbolos[s];
+
                     // Evitar duplicados en nuevas transiciones
                     int encontrado = 0;
                     for (int k = 0; k < numNuevasTransiciones; k++) {
@@ -413,7 +434,17 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
                             break;
                         }
                     } 
-                
+                    int anagrama = 0;
+                    for(int k = 0; k < numTransiciones; k++){
+                        if(son_anagramas(nuevoDestino, nuevasTransiciones[k].origen)){
+                            anagrama = 1;
+                            break;
+                        }
+                    }
+                    if(anagrama){
+                        continue;
+                    }
+                    // Verificar si el nuevo destino es un anagrama de algun destino nuevo anterior
                     if (!encontrado) {
                         my_strcpy(nuevasTransiciones[numNuevasTransiciones].origen, nuevoDestino);
                         nuevasTransiciones[numNuevasTransiciones].simbolo = simboloActual;
@@ -427,7 +458,6 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
                         }
                         my_strcpy(nuevasTransiciones[numNuevasTransiciones].destino, destinoConcat);
                         numNuevasTransiciones++;
-                        printf("Nuevo enlace\n");
                     }
                 }
             }
@@ -445,6 +475,8 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
             encontrarTransicionesDeNuevoOrigen(nuevasTransiciones[i].destino, transicionesArray, numEstados, simbolos, numSimbolos, nuevasTransiciones, &numNuevasTransiciones);
         }
     }
+
+    // Imprimir las nuevas transiciones generadas
     printf("Nuevas transiciones finales\n");
     for(int i = 0; i < numNuevasTransiciones; i++){
         printf("%s,%c,%s\n", nuevasTransiciones[i].origen, nuevasTransiciones[i].simbolo, nuevasTransiciones[i].destino);
