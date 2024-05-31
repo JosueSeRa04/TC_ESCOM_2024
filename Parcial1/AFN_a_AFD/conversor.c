@@ -482,7 +482,7 @@ void generarNuevasTransiciones(char** transiciones, int numTransiciones, FILE* a
         printf("%s,%c,%s\n", nuevasTransiciones[i].origen, nuevasTransiciones[i].simbolo, nuevasTransiciones[i].destino);
     }
 
-    imprimirTransiciones(transicionesArray, numEstados,archivoSalida);
+    //imprimirTransiciones(transicionesArray, numEstados,archivoSalida);
     imprimirTransiciones(nuevasTransiciones, numNuevasTransiciones,archivoSalida);
 } 
 
