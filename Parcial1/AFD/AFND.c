@@ -17,7 +17,7 @@
 
 // Definicion de la matriz de estados
 // Matriz del ejercicio 1
-/* int matrizEstados[cantidadAmbiguedad][estadosCantidad][cantidadAlfabeto] = {
+int matrizEstados[cantidadAmbiguedad][estadosCantidad][cantidadAlfabeto] = {
     {//  d| a | b |
         {0, 1, 3},
         {1, 1, 2},
@@ -32,10 +32,10 @@
         {3, -1, -1},
         {4, -1, 4}
     }
-}; */
+}; 
 
 // Matriz del ejercicio 2
-int matrizEstados[cantidadAmbiguedad][estadosCantidad][cantidadAlfabeto] = {
+/* int matrizEstados[cantidadAmbiguedad][estadosCantidad][cantidadAlfabeto] = {
     {//  d| a | b |
         {0, 0, 0},
         {1, -1, 2},
@@ -51,6 +51,7 @@ int matrizEstados[cantidadAmbiguedad][estadosCantidad][cantidadAlfabeto] = {
         {4, 4, 4}
     }
 };
+ */
 
 // Definicion de los estados finales
 int estadosFinales[estadosCantidad] = {0,0,1,1,1}; // Estados finales basados en la matriz de estados
