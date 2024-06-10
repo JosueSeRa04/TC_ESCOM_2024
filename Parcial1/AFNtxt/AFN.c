@@ -28,6 +28,7 @@ typedef struct {
 
 typedef struct {
     char path[MAX_PATH_LENGTH][10];
+    char symbols[MAX_PATH_LENGTH];
     int length;
 } Path;
 
@@ -131,7 +132,9 @@ void simulate_nfa(NFA *nfa, char *input) {
                     if (to_state_index != -1) {
                         next_states[next_count] = to_state_index;
                         memcpy(next_paths[next_count].path, current_paths[j].path, current_paths[j].length * sizeof(current_paths[j].path[0]));
+                        memcpy(next_paths[next_count].symbols, current_paths[j].symbols, current_paths[j].length * sizeof(current_paths[j].symbols[0]));
                         strcpy(next_paths[next_count].path[current_paths[j].length], nfa->transitions[k].to_state);
+                        next_paths[next_count].symbols[current_paths[j].length - 1] = symbol;
                         next_paths[next_count].length = current_paths[j].length + 1;
                         next_count++;
                     }
@@ -152,11 +155,11 @@ void simulate_nfa(NFA *nfa, char *input) {
             accepted = 1;
             printf("Input accepted. \nPath taken: ");
             for (j = 0; j < current_paths[i].length; j++) {
-                printf("%s ", current_paths[i].path[j]);
+                printf("%s", current_paths[i].path[j]);
                 if (j < current_paths[i].length - 1) {
-                    printf("-> ");
+                    printf("(%c)--> ", current_paths[i].symbols[j]);
+                }
             }
-        }
             printf("\n");
         }
     }
