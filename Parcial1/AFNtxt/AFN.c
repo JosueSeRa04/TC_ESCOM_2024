@@ -115,6 +115,9 @@ void simulate_nfa(NFA *nfa, char *input) {
     if (initial_index == -1) {
         printf("Invalid initial state\n");
         return;
+    } else if(initial_index != -1 && is_final_state(nfa, nfa->initial_state) && strcmp(input, "E") == 0){
+        printf("Input accepted. \nPath taken: %s\n", nfa->initial_state);
+        return;
     }
 
     current_states[0] = initial_index;
